@@ -8,26 +8,32 @@ print_green() {
     echo -e "\e[32m$1\e[0m"
 }
 
+print_red "Installing dependencies."
 apt-get update -qq > /dev/null
 apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
 
+print_red "Installing Docker."
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 chmod a+r /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+print_red "Installing Docker and plugins."
 apt-get update -qq > /dev/null
 apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
 systemctl enable docker
 
+docker_version=$(docker --version)
+print_red "$docker_version"
+
+sleep 2
+print_red "Installing Docker-compose."
 curl -SL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-docker_version=$(docker --version)
 docker_compose_version=$(docker-compose --version)
-print_red "Установленная версия Docker: $docker_version"
-print_red "Установленная версия Docker Compose: $docker_compose_version"
+print_red "$docker_compose_version"
 
 mkdir -p /home/x-ui
 cat <<EOL > /home/x-ui/docker-compose.yaml
