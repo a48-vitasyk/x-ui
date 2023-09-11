@@ -48,7 +48,7 @@ if ! command -v pv &> /dev/null; then
 fi
 
 print_red "Installing dependencies."
-update_time_counter "Installing dependencies" 6 1 &
+update_time_counter "\nInstalling dependencies" 6 1 &
 pid1=$!
 apt-get update -qq > /dev/null
 apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
@@ -68,11 +68,12 @@ chmod a+r /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 kill $pid3
 
-print_red "\nInstalling Docker plugins."
+print_red "Installing Docker plugins."
 update_time_counter "Installing Docker plugins" 6 5 &
 pid4=$!
 apt-get update -qq > /dev/null
 apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
+echo
 systemctl enable docker > /dev/null 2>&1
 kill $pid4
 
