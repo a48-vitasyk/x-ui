@@ -57,7 +57,7 @@ print_red "\nInstalling Docker."
 update_time_counter "Installing Docker" 6 3 &
 pid2=$!
 install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | echo "y" | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 kill $pid2
 
 update_time_counter "Installing Docker" 6 4 &
@@ -71,7 +71,7 @@ update_time_counter "Installing Docker plugins" 6 5 &
 pid4=$!
 apt-get update -qq > /dev/null
 apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
-systemctl enable docker > /dev/null
+systemctl enable docker 
 kill $pid4
 
 docker_version=$(docker --version)
