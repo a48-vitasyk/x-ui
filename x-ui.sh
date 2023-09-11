@@ -73,7 +73,7 @@ update_time_counter "Installing Docker plugins" 6 5 &
 pid4=$!
 apt-get update -qq > /dev/null
 apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
-systemctl enable docker > /dev/null
+systemctl enable docker > /dev/null 2>&1
 kill $pid4
 
 docker_version=$(docker --version)
