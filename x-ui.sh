@@ -1,5 +1,17 @@
 #!/bin/bash
 
+if ! command -v curl &> /dev/null; then
+    echo "curl не найден. Устанавливаю..."
+    apt-get update
+    apt-get install -y curl
+fi
+
+if ! command -v pv &> /dev/null; then
+    echo "pv не найден. Устанавливаю..."
+    apt-get update
+    apt-get install -y pv
+fi
+
 print_red() {
     echo -e "\e[31m$1\e[0m"
 }
