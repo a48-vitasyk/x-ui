@@ -1,15 +1,15 @@
 #!/bin/bash
 
 if ! command -v curl &> /dev/null; then
-    echo "curl не найден. Устанавливаю..."
-    apt-get update
-    apt-get install -y curl
+    echo "Installing curl ..."
+    apt-get update > /dev/null
+    apt-get install -y curl > /dev/null
 fi
 
 if ! command -v pv &> /dev/null; then
-    echo "pv не найден. Устанавливаю..."
-    apt-get update
-    apt-get install -y pv
+    echo "Installing pv ..."
+    apt-get update > /dev/null
+    apt-get install -y pv > /dev/null
 fi
 
 print_red() {
