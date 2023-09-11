@@ -48,7 +48,8 @@ if ! command -v pv &> /dev/null; then
 fi
 
 print_red "Installing dependencies."
-update_time_counter "\nInstalling dependencies" 6 1 &
+echo
+update_time_counter "Installing dependencies" 6 1 &
 pid1=$!
 apt-get update -qq > /dev/null
 apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
