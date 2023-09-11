@@ -88,7 +88,7 @@ chmod +x /usr/local/bin/docker-compose
 kill $pid5
 
 docker_compose_version=$(docker-compose --version)
-print_red "\n$docker_compose_version"
+print_red "$docker_compose_version"
 
 print_green "Finalizing installation."
 mkdir -p /home/x-ui
