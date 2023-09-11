@@ -59,7 +59,7 @@ print_red "\nInstalling Docker."
 update_time_counter "Installing Docker" 6 3 &
 pid2=$!
 install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | echo "y" | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 kill $pid2
 
 update_time_counter "Installing Docker" 6 4 &
@@ -79,7 +79,7 @@ kill $pid4
 docker_version=$(docker --version)
 print_red "\n$docker_version"
 
-print_red "\nInstalling Docker-compose."
+print_red "Installing Docker-compose."
 update_time_counter "Installing Docker-compose" 6 6 &
 pid5=$!
 curl -sSL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
@@ -90,7 +90,7 @@ kill $pid5
 docker_compose_version=$(docker-compose --version)
 print_red "\n$docker_compose_version"
 
-print_green "\nFinalizing installation."
+print_green "Finalizing installation."
 mkdir -p /home/x-ui
 cat <<EOL > /home/x-ui/docker-compose.yaml
 version: "3.9"
@@ -111,10 +111,10 @@ EOL
 cd /home/x-ui
 docker-compose up -d
 
-sleep 5
+sleep 3
 ip_server=$(echo $SSH_CONNECTION | awk '{print $3}')
 log_output=$(docker logs x-ui 2>&1 | grep "INFO - web server run http on")
 PORT=$(echo "$log_output" | grep -oP '\[\:\:\]\:\K\d+')
-print_red "\n---------------------------"
+print_red "\n------------------------------------"
 print_green "Panel running on ${ip_server}:${PORT}"
-print_red "---------------------------"
+print_red "------------------------------------"
