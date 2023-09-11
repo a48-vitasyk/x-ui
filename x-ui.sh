@@ -59,7 +59,6 @@ sleep 5
 ip_server=$(echo $SSH_CONNECTION | awk '{print $3}')
 log_output=$(docker logs x-ui 2>&1 | grep "INFO - web server run http on")
 PORT=$(echo "$log_output" | grep -oP '\[\:\:\]\:\K\d+')
-echo ""
+print_red "-------------------------"
 print_green "Panel running on ${ip_server}:${PORT}"
-echo ""
-
+print_red "-------------------------"
