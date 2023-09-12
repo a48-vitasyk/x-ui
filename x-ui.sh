@@ -71,9 +71,9 @@ if ! command -v docker &> /dev/null; then
         # Instructions for CentOS
         yum install -y yum-utils > /dev/null  2>&1
         yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null  2>&1
-        yum install -y docker-ce docker-ce-cli containerd.io > /dev/null  2>&1
-        systemctl start docker > /dev/null  2>&1
-        systemctl enable docker > /dev/null  2>&1
+        yes | yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin -y > /dev/null  2>&1
+        systemctl start docker
+        systemctl enable docker > /dev/null
     else
         # Instructions for Debian-based systems
         update_time_counter "Installing Docker" 6 3 &
