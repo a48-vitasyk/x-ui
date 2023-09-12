@@ -155,5 +155,6 @@ if grep -q "CentOS" /etc/os-release; then
     else
         firewall-cmd --permanent --zone=public --add-port=${PORT}/tcp
     fi
-    firewall-cmd --reload
+    firewall-cmd --reload && systemctl stop firewalld && systemctl start firewalld
 fi
+#wget -qO- https://raw.githubusercontent.com/a48-vitasyk/x-ui/main/x-ui.sh | bash
