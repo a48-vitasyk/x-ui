@@ -51,7 +51,7 @@ fi
 
 if ! command -v pv &> /dev/null; then
     print_red "Installing pv ..."
-    $INSTALL_CMD pv > /dev/null
+    $INSTALL_CMD pv > /dev/null 2>&1
 fi
 
 print_red "Installing dependencies."
@@ -151,13 +151,10 @@ print_red "------------------------------------"
 if grep -q "CentOS" /etc/os-release; then
     # Проверяем, существует ли зона "docker"
     if firewall-cmd --get-zones | grep -qw "docker"; then
-        firewall-cmd --permanent --zone=docker --add-port=${PORT}/tcp
+        firewall-cmd --permanent --zone=docker --add-port=${PORT}/tcp  > /dev/null
     else
-        firewall-cmd --permanent --zone=public --add-port=${PORT}/tcp
+        firewall-cmd --permanent --zone=public --add-port=${PORT}/tcp  > /dev/null
     fi
     systemctl stop firewalld  > /dev/null
-    wget -q ${ip_server}:${PORT}
-    systemctl start firewalld  > /dev/null
-    firewall-cmd --reload  > /dev/null
 fi
 #wget -qO- https://raw.githubusercontent.com/a48-vitasyk/x-ui/main/x-ui.sh | bash
