@@ -69,11 +69,11 @@ print_red "\nInstalling Docker."
 if ! command -v docker &> /dev/null; then
     if $IS_CENTOS; then
         # Instructions for CentOS
-        yum install -y yum-utils > /dev/null
-        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null
-        yum install -y docker-ce docker-ce-cli containerd.io > /dev/null
-        systemctl start docker > /dev/null
-        systemctl enable docker > /dev/null
+        yum install -y yum-utils > /dev/null  2>&1
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null  2>&1
+        yum install -y docker-ce docker-ce-cli containerd.io > /dev/null  2>&1
+        systemctl start docker > /dev/null  2>&1
+        systemctl enable docker > /dev/null  2>&1
     else
         # Instructions for Debian-based systems
         update_time_counter "Installing Docker" 6 3 &
