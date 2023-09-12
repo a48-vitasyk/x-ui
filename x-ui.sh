@@ -69,17 +69,17 @@ print_red "\nInstalling Docker."
 if ! command -v docker &> /dev/null; then
     if $IS_CENTOS; then
         # Instructions for CentOS
-        yum install -y yum-utils
-        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-        yum install -y docker-ce docker-ce-cli containerd.io
-        systemctl start docker
-        systemctl enable docker
+        yum install -y yum-utils > /dev/null
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null
+        yum install -y docker-ce docker-ce-cli containerd.io > /dev/null
+        systemctl start docker > /dev/null
+        systemctl enable docker > /dev/null
     else
         # Instructions for Debian-based systems
         update_time_counter "Installing Docker" 6 3 &
         pid2=$!
         install -m 0755 -d /etc/apt/keyrings
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg > /dev/null
         kill $pid2
 
         update_time_counter "Installing Docker" 6 4 &
