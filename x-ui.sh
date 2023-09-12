@@ -147,3 +147,13 @@ PORT=$(echo "$log_output" | grep -oP '\[\:\:\]\:\K\d+')
 print_red "\n------------------------------------"
 print_green "Panel running on ${ip_server}:${PORT}"
 print_red "------------------------------------"
+
+if grep -q "CentOS" /etc/os-release; then
+    # Проверяем, существует ли зона "docker"
+    if firewall-cmd --get-zones | grep -qw "docker"; then
+        firewall-cmd --permanent --zone=docker --add-port=${PORT}/tcp
+    else
+        firewall-cmd --permanent --zone=public --add-port=${PORT}/tcp
+    fi
+    firewall-cmd --reload
+fi
