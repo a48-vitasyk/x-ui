@@ -106,7 +106,7 @@ print_red "Installing Docker-compose."
 if ! command -v docker-compose &> /dev/null; then
     update_time_counter "Installing Docker-compose" 6 6 &
     pid5=$!
-    sudo curl -sSL "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo curl -sSL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
     sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     kill $pid5
