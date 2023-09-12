@@ -35,59 +35,86 @@ print_green() {
 
 start_time=$(date +%s)
 
+if grep -q "CentOS" /etc/*release; then
+    IS_CENTOS=true
+    INSTALL_CMD="yum -y install"
+else
+    IS_CENTOS=false
+    apt-get update > /dev/null
+    INSTALL_CMD="apt-get install -y"
+fi
+
 if ! command -v curl &> /dev/null; then
     print_red "Installing curl ..."
-    apt-get update > /dev/null
-    apt-get install -y curl > /dev/null
+    $INSTALL_CMD curl > /dev/null
 fi
 
 if ! command -v pv &> /dev/null; then
     print_red "Installing pv ..."
-    apt-get update > /dev/null
-    apt-get install -y pv > /dev/null
+    $INSTALL_CMD pv > /dev/null
 fi
 
 print_red "Installing dependencies."
 echo
-update_time_counter "Installing dependencies" 6 1 &
-pid1=$!
-apt-get update -qq > /dev/null
-apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
-
-kill $pid1
-
+if $IS_CENTOS; then
+    $INSTALL_CMD ca-certificates curl gnupg vim > /dev/null
+else
+    update_time_counter "Installing dependencies" 6 1 &
+    pid1=$!
+    apt-get update -qq > /dev/null
+    apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
+    kill $pid1
+fi
 print_red "\nInstalling Docker."
-update_time_counter "Installing Docker" 6 3 &
-pid2=$!
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
-kill $pid2
+if ! command -v docker &> /dev/null; then
+    if $IS_CENTOS; then
+        # Instructions for CentOS
+        yum install -y yum-utils
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        yum install -y docker-ce docker-ce-cli containerd.io
+        systemctl start docker
+        systemctl enable docker
+    else
+        # Instructions for Debian-based systems
+        update_time_counter "Installing Docker" 6 3 &
+        pid2=$!
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+        kill $pid2
 
-update_time_counter "Installing Docker" 6 4 &
-pid3=$!
-chmod a+r /etc/apt/keyrings/docker.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-kill $pid3
+        update_time_counter "Installing Docker" 6 4 &
+        pid3=$!
+        chmod a+r /etc/apt/keyrings/docker.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        kill $pid3
 
-print_red "Installing Docker plugins."
-update_time_counter "Installing Docker plugins" 6 5 &
-pid4=$!
-apt-get update -qq > /dev/null
-apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
-echo
-systemctl enable docker > /dev/null 2>&1
-kill $pid4
-
-docker_version=$(docker --version)
-print_red "\n$docker_version"
+        print_red "Installing Docker plugins."
+        update_time_counter "Installing Docker plugins" 6 5 &
+        pid4=$!
+        apt-get update -qq > /dev/null
+        apt-get install -y -qq docker-ce docker-ce-cli containerd.io > /dev/null
+        echo
+        systemctl enable docker > /dev/null 2>&1
+        kill $pid4
+    fi
+else
+    docker_version=$(docker --version)
+    print_red "\n$docker_version"
+fi
 
 print_red "Installing Docker-compose."
-update_time_counter "Installing Docker-compose" 6 6 &
-pid5=$!
-curl -sSL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
-ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-kill $pid5
+if ! command -v docker-compose &> /dev/null; then
+    update_time_counter "Installing Docker-compose" 6 6 &
+    pid5=$!
+    sudo curl -sSL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+    sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    kill $pid5
+else
+    docker_compose_version=$(docker-compose --version)
+    print_red "\n$docker_compose_version"
+fi
+
 
 docker_compose_version=$(docker-compose --version)
 print_red "$docker_compose_version"
