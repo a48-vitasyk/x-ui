@@ -40,8 +40,8 @@ if grep -q "CentOS" /etc/*release; then
     INSTALL_CMD="yum -y install"
 else
     IS_CENTOS=false
-    apt-get update > /dev/null
-    INSTALL_CMD="apt-get install -y"
+    sudo apt-get update > /dev/null
+    INSTALL_CMD="sudo apt-get install -y"
 fi
 
 if ! command -v curl &> /dev/null; then
@@ -61,8 +61,8 @@ if $IS_CENTOS; then
 else
     update_time_counter "Installing dependencies" 6 1 &
     pid1=$!
-    apt-get update -qq > /dev/null
-    apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
+    sudo apt-get update -qq > /dev/null
+    sudo apt-get install -y -qq ca-certificates curl gnupg vim > /dev/null
     kill $pid1
 fi
 print_red "\nInstalling Docker."
@@ -91,8 +91,8 @@ if ! command -v docker &> /dev/null; then
         print_red "Installing Docker plugins."
         update_time_counter "Installing Docker plugins" 6 5 &
         pid4=$!
-        apt-get update -qq > /dev/null
-        apt-get install -y -qq docker-ce docker-ce-cli containerd.io > /dev/null
+        sudo apt-get update -qq > /dev/null
+        sudo apt-get install -y -qq docker-ce docker-ce-cli containerd.io > /dev/null
         echo
         systemctl enable docker > /dev/null 2>&1
         kill $pid4
